@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Question-Answer Web App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        h1 {
+            font-weight: 600;
+            color: #4A90E2;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        form {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            padding: 10px 15px;
+        }
+
+        .btn-primary {
+            background-color: #4A90E2;
+            border-color: #4A90E2;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #357ABD;
+            transform: scale(1.05);
+        }
+
+        .progress-bar {
+            background-color: #4A90E2;
+        }
+
+        #progress-bar {
+            display: none;
+            margin-top: 10px;
+        }
+
+        #answer-container {
+            margin-top: 30px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        #answer-container h4 {
+            font-size: 18px;
+            color: #4A90E2;
+        }
+
+        #answer-text {
+            font-size: 16px;
+            color: #333;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            background: #4A90E2;
+            color: #fff;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ask Anything to AI</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form id="question-form">
+                    <div class="form-group">
+                        <label for="question">What's your question?</label>
+                        <input type="text" class="form-control" id="question" placeholder="Type your question here...">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Get Answer</button>
+                </form>
+
+                <div id="progress-bar" class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+                </div>
+
+                <div id="answer-container">
+                    <h4>Answer:</h4>
+                    <p id="answer-text"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Powered by Hugging Face API & Flask
+    </footer>
+
+    <script>
+        document.getElementById('question-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const question = document.getElementById('question').value;
+
+            // Display progress bar
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.display = 'block';
+
+            // Hide the answer section initially
+            const answerContainer = document.getElementById('answer-container');
+            const answerText = document.getElementById('answer-text');
+            answerContainer.style.display = 'none';
+            answerText.textContent = '';
+
+            // Send question to the server
+            const response = await fetch('/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ question: question }),
+            });
+
+            const result = await response.json();
+
+            // Hide the progress bar and display the answer
+            progressBar.style.display = 'none';
+            answerText.textContent = result.answer;
+            answerContainer.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
